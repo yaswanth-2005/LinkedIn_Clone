@@ -68,7 +68,7 @@ const PostCreation = ({ user }) => {
   };
 
   return (
-    <div className="bg-secondary rounded-lg  border-2 border-gray-300 shadow-lg mb-4 p-4">
+    <div className="bg-secondary rounded-lg  border border-gray-300  mb-4 p-4">
       <div className="flex space-x-3">
         <img
           src={user.profilePicture || "/avatar.png"}
@@ -79,7 +79,7 @@ const PostCreation = ({ user }) => {
           placeholder="what's on your mind!"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full p-3 rounded-lg bg-base-100 shadow-lg hover:bg-base-200 focus:bg-base-200 focus:outline-none resize-none transition-colors duration-200 min-h-[100px]"
+          className="w-full p-3 rounded-lg bg-base-100 shadow-sm border border-gray-300 hover:bg-base-200 focus:bg-base-200 focus:outline-none resize-none transition-colors duration-200 min-h-[100px]"
         ></textarea>
       </div>
 
@@ -109,7 +109,7 @@ const PostCreation = ({ user }) => {
 
         <button
           //   className="bg-primary text-white rounded-lg px-4 py-2 hover:bg-primary-dark transition-colors duration-200"
-          className="bg-primary shadow-lg text-white rounded-lg px-4 py-2 hover:bg-secondary border-blue-500 border hover:text-blue-500 transition-colors duration-200"
+          className="bg-primary text-white rounded-lg px-4 py-2 hover:bg-secondary border-blue-500 border hover:text-blue-500 transition-colors duration-200"
           onClick={handlePostCreation}
           disabled={isPending}
         >

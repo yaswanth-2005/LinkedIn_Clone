@@ -56,13 +56,13 @@ const NotificationsPage = () => {
     switch (notification.type) {
       case "like":
         return (
-          <span>
+          <span className="text-sm">
             <strong>{notification.relatedUser.name}</strong> liked your post
           </span>
         );
       case "comment":
         return (
-          <span>
+          <span className="text-sm">
             <Link
               to={`/profile/${notification.relatedUser.username}`}
               className="font-bold"
@@ -74,7 +74,7 @@ const NotificationsPage = () => {
         );
       case "connectionAccepted":
         return (
-          <span>
+          <span className="text-sm">
             <Link
               to={`/profile/${notification.relatedUser.username}`}
               className="font-bold"
@@ -95,47 +95,58 @@ const NotificationsPage = () => {
     return (
       <Link
         to={`/post/${relatedPost._id}`}
-        className="mt-2 p-2 bg-gray-50 rounded-md flex items-center space-x-2 hover:bg-gray-100 transition-colors"
+        className="mt-2 p-3 bg-gray-50/80 hover:bg-gray-100/90 transition-colors rounded-lg border border-gray-200 flex items-center gap-3 w-full max-w-full sm:max-w-xs"
       >
         {relatedPost.image && (
           <img
             src={relatedPost.image}
             alt="Post preview"
-            className="w-10 h-10 object-cover rounded"
+            className="w-12 h-12 object-cover rounded-md flex-shrink-0"
           />
         )}
-        <div className="flex-1 overflow-hidden">
-          <p className="text-sm text-gray-600 truncate">
+        <div className="flex-1 min-w-0">
+          {" "}
+          {/* Added min-w-0 here */}
+          <p className="text-sm text-gray-700 font-medium truncate">
             {relatedPost.content}
           </p>
+          <p className="text-xs text-gray-500 mt-1">View post</p>
         </div>
-        <ExternalLink size={14} className="text-gray-400" />
+        <ExternalLink size={16} className="text-gray-400 flex-shrink-0" />
       </Link>
     );
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 ">
       <div className="col-span-1 lg:col-span-1">
         <Sidebar user={authUser} />
       </div>
       <div className="col-span-1 lg:col-span-3">
-        <div className="bg-white rounded-lg shadow-xl p-6">
-          <h1 className="text-2xl font-bold mb-6">Notifications</h1>
+        <div className="bg-white rounded-lg border border-gray-300 ">
+          <h1 className="text-2xl font-bold mb-4 md:mb-6 text-center p-6 lg:text-left">
+            Notifications
+          </h1>
 
           {isLoading ? (
-            <p>Loading notifications...</p>
+            <p className="text-center text-gray-600">
+              Loading notifications...
+            </p>
           ) : notifications && notifications.data.length > 0 ? (
             <ul>
               {notifications.data.map((notification) => (
                 <li
                   key={notification._id}
-                  className={`bg-white border rounded-lg p-4 my-4 transition-all shadow-lg  hover:bg-gray-200 ${
-                    !notification.read ? "border-blue-500" : "border-gray-200"
+                  className={` text-sm border-b border-gray-300 p-4  transition-all  hover:bg-gray-200 ${
+                    !notification.read
+                      ? "bg-blue-100  hover:bg-[#96c2f2]"
+                      : "border-gray-300"
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-start space-x-3 w-full sm:w-auto">
+                      {" "}
+                      {/* Added w-full sm:w-auto */}
                       <Link
                         to={`/profile/${notification.relatedUser.username}`}
                       >
@@ -145,16 +156,21 @@ const NotificationsPage = () => {
                             "/avatar.png"
                           }
                           alt={notification.relatedUser.name}
-                          className="w-12 h-12 rounded-full object-cover"
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0" // Added flex-shrink-0
                         />
                       </Link>
-
-                      <div>
+                      <div className="flex-1 min-w-0">
+                        {" "}
+                        {/* Ensure this div can shrink and its content truncates */}
                         <div className="flex items-center gap-2">
-                          <div className="p-1 bg-gray-100 rounded-full">
+                          <div className="p-1 bg-gray-100 rounded-full flex-shrink-0">
+                            {" "}
+                            {/* Added flex-shrink-0 */}
                             {renderNotificationIcon(notification.type)}
                           </div>
-                          <p className="text-sm">
+                          <p className="text-sm sm:text-base flex-1 min-w-0">
+                            {" "}
+                            {/* Added flex-1 min-w-0 */}
                             {renderNotificationContent(notification)}
                           </p>
                         </div>
@@ -170,7 +186,9 @@ const NotificationsPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 self-end sm:self-auto mt-2 sm:mt-0 flex-shrink-0">
+                      {" "}
+                      {/* Added flex-shrink-0 */}
                       {!notification.read && (
                         <button
                           onClick={() => markAsReadMutation(notification._id)}
@@ -180,7 +198,6 @@ const NotificationsPage = () => {
                           <Eye size={16} />
                         </button>
                       )}
-
                       <button
                         onClick={() =>
                           deleteNotificationMutation(notification._id)
@@ -196,7 +213,9 @@ const NotificationsPage = () => {
               ))}
             </ul>
           ) : (
-            <p>No notification at the moment.</p>
+            <p className="text-center text-gray-600">
+              No notification at the moment.
+            </p>
           )}
         </div>
       </div>

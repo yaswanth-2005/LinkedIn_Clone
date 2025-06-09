@@ -28,7 +28,7 @@ const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(username, password);
+    // console.log(username, password);
     loginMutation({ username, password });
   };
 

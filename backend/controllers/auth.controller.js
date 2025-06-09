@@ -7,61 +7,102 @@ export const signup = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
 
+    // Validate input fields
     if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists" });
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
+    // Validate username (no spaces, special chars)
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return res.status(400).json({
+        message: "Username can only contain letters, numbers and underscores",
+      });
+    }
+
+    // Check if email or username already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
       return res.status(400).json({ message: "Username already exists" });
     }
 
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
+    // Validate password strength
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long",
+      });
+    }
+    if (
+      !/[A-Z]/.test(password) ||
+      !/[0-9]/.test(password) ||
+      !/[^A-Za-z0-9]/.test(password)
+    ) {
+      return res.status(400).json({
+        message:
+          "Password must contain at least one uppercase letter, one number, and one special character",
+      });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await User.create({
+    // Create the user
+    const user = new User({
       name,
-      username,
-      password: hashedPassword,
       email,
+      password: hashedPassword,
+      username,
     });
 
     await user.save();
 
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "3d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "3d",
     });
 
-    res.cookie("jwt-linkedin", token, {
-      httpOnly: true,
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-      secure: (process.env.NODE_ENV = "production"),
-    });
+    // Set cookie with token
+    res
+      .cookie("jwt-linkedin", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+      })
+      .status(201)
+      .json({
+        message: "User registered successfully",
+        user: {
+          id: user._id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+        },
+      });
 
-    res.status(201).json({ message: "User created Successfully.." });
-
-    const profileUrl = process.env.CLIENT_URL + "/profile/" + user.username;
-
-    try {
-      await sendWelcomeEmail(user.email, user.name, profileUrl);
-    } catch (mailError) {
-      console.error(mailError);
-    }
+    // Send welcome email (async - don't await)
+    const profileUrl = `${process.env.CLIENT_URL}/profile/${user.username}`;
+    sendWelcomeEmail(user.email, user.name, profileUrl).catch((err) =>
+      console.error("Welcome email failed:", err)
+    );
   } catch (error) {
-    console.error(`Error in SignUp ${error.message} `);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in signup:", error);
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "Email or username already exists" });
+    }
+
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -70,50 +111,67 @@ export const login = async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ message: "Username and password are required" });
     }
-    console.log(username, password);
-    const user = await User.findOne({ username });
 
+    // Check if user exists
+    const user = await User.findOne({ username }).select("+password");
     if (!user) {
-      return res.status(400).json({ message: "User Not Found." });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log(isMatch);
-
+    // const isMatch = password === user.password;
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid Credentials." });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "3d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "3d",
     });
 
-    res.cookie("jwt-linkedin", token, {
-      httpOnly: true,
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-      secure: (process.env.NODE_ENV = "production"),
-    });
-
-    res.status(200).json({ message: "Logged In successfully!!" });
+    // Set cookie with token
+    res
+      .cookie("jwt-linkedin", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+      })
+      .json({
+        message: "Logged in successfully",
+        user: {
+          id: user._id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+        },
+      });
   } catch (error) {
-    console.error("Error in Login Controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in login controller:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("jwt-linkedin");
-  res.json({ message: "Logged Out Successfully!!" });
+  res
+    .clearCookie("jwt-linkedin", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+    .json({ message: "Logged out successfully" });
 };
 
-export const getCurrentUser = (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     res.json(req.user);
   } catch (error) {
-    console.error("Error in getCurrentUser Controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in getCurrentUser controller:", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

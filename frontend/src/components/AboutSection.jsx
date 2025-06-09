@@ -11,7 +11,7 @@ const AboutSection = ({ userData, isOwnProfile, onSave }) => {
 
   // console.log(userData.about);
   return (
-    <div className="bg-white shadow-lg border-2 border-gray-300 rounded-lg p-6 mb-6">
+    <div className="bg-white  border border-gray-300 rounded-lg p-6 mb-6">
       <h2 className="text-xl font-semibold mb-4">About</h2>
       {isOwnProfile ? (
         <>

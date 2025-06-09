@@ -162,6 +162,8 @@ export const getConnectionRequests = async (req, res) => {
     }).populate("sender", "name username profilePicture headline connections");
 
     res.json(requests);
+
+    // console.log({ requests });
   } catch (error) {
     console.error("Error in getConnectionRequests Controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });

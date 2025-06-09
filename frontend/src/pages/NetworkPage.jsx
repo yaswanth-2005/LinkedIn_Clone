@@ -11,10 +11,10 @@ const NetworkPage = () => {
 
   const { data: connectionRequests } = useQuery({
     queryKey: ["connectionRequests"],
-    queryFn: () => {
-      axiosInstance.get("/connections/requests");
-    },
+    queryFn: () => axiosInstance.get("/connections/requests"),
   });
+
+  // console.log({ connectionRequests });
 
   const { data: connections } = useQuery({
     queryKey: ["connections"],
@@ -28,7 +28,7 @@ const NetworkPage = () => {
       </div>
 
       <div className="col-span-1 lg:col-span-3">
-        <div className="bg-secondary rounded-lg shadow-xl p-6 mb-6">
+        <div className="bg-secondary rounded-lg border border-gray-300 p-6 mb-6">
           <h1 className="text-2xl font-semibold mb-6">My Network</h1>
 
           {connectionRequests?.data?.length > 0 ? (

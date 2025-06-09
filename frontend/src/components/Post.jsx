@@ -89,7 +89,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div className="bg-secondary border-2 border-gray-300 rounded-lg shadow-xl mb-4">
+    <div className="bg-secondary border border-gray-300 rounded-lg  mb-4">
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-row items-start">
@@ -154,7 +154,7 @@ const Post = ({ post }) => {
             {comments.map((comment) => (
               <div
                 key={comment._id}
-                className="mb-2 bg-base-100 p-3 border-2 rounded-lg flex items-start"
+                className="mb-2 bg-base-100 p-3 border rounded-lg flex items-start"
               >
                 <img
                   src={comment.user.profilePicture || "/avatar.png"}

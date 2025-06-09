@@ -160,7 +160,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg border-2 border-gray-300 rounded-lg mb-6">
+    <div className="bg-white  border border-gray-300 rounded-lg mb-6">
       <div
         className="relative h-48 rounded-t-lg bg-cover bg-center"
         style={{
@@ -170,7 +170,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
         }}
       >
         {isEditing && (
-          <label className="absolute top-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer">
+          <label className="absolute top-2 right-2 bg-white p-2 rounded-full  cursor-pointer">
             <Camera size={20} />
             <input
               type="file"
@@ -196,7 +196,7 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
           />
 
           {isEditing && (
-            <label className="absolute bottom-0 right-1/2 transform translate-x-16 bg-white p-2 rounded-full shadow cursor-pointer">
+            <label className="absolute bottom-0 right-1/2 transform translate-x-16 bg-white p-2 rounded-full  cursor-pointer">
               <Camera size={20} />
               <input
                 type="file"

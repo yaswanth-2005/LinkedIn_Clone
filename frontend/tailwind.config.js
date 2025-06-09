@@ -15,7 +15,7 @@ export default {
       //   bold: 1000,
       // },
       fontFamily: {
-        sans: ["'Poppins'", "sans-serif"],
+        sans: ["'Figtree'", "sans-serif"],
       },
     },
   },

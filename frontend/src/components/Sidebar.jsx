@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 const Sidebar = ({ user }) => {
   return (
-    <div className="bg-secondary rounded-lg border-2 border-gray-300 shadow-xl">
-      <div div className="p-4 text-center">
+    <div className="bg-secondary rounded-lg border border-gray-300 text-sm  ">
+      <div className="p-4 text-center">
         <div
           className="h-16 rounded-t-lg bg-cover bg-center"
           style={{ backgroundImage: `url(${user.bannerImg || "/banner.png"})` }}
@@ -16,7 +16,7 @@ const Sidebar = ({ user }) => {
             alt={user.username}
             className="w-20 h-20 rounded-full mx-auto mt-[-40px]"
           />
-          <h2 className="text-xl font-semibold mt-2">{user.name}</h2>
+          <h2 className="text-lg font-semibold mt-2">{user.name}</h2>
         </Link>
         <p className="text-info">{user.headline}</p>
         <p className="text-info text-xs">
@@ -25,7 +25,7 @@ const Sidebar = ({ user }) => {
       </div>
       <div className="border-t border-gray-300 ml-4 mr-4 py-5">
         <nav>
-          <ul className="space-y-2">
+          <ul className="space-y-2 text-sm font-medium">
             <li>
               <Link
                 to="/"

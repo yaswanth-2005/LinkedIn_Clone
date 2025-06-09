@@ -23,13 +23,13 @@ const SkillsSection = ({ userData, isOwnProfile, onSave }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg border-2 border-gray-300 rounded-lg p-6">
+    <div className="bg-white  border border-gray-300 rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Skills</h2>
       <div className="flex flex-wrap">
         {skills.map((skill, index) => (
           <span
             key={index}
-            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full border-2 border-gray-200 text-sm mr-2 mb-2 flex items-center"
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full border border-gray-200 text-sm mr-2 mb-2 flex items-center"
           >
             {skill}
             {isEditing && (
